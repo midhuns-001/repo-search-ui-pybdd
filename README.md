@@ -23,9 +23,9 @@ As this is a Python project, build and dependency management is handled by Pipen
 
 Follow below steps to setup this project
 
-* Install pipenv. pip install pipenv
-* Install Pipfile and create environment. pipenv install Pipfile
-* Activate environment. pipenv shell
+* Install pipenv. Example: pip install pipenv
+* Install Pipfile and create environment. Example: pipenv install Pipfile
+* Activate environment. Example: pipenv shell
 
 
 

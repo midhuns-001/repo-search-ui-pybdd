@@ -21,7 +21,11 @@ As this is a Python project, build and dependency management is handled by Pipen
 * Webdriver-Manager v3.5.4
 * Pytest-html v3.1.1
 
+Follow below steps to setup this project
 
+* Install pipenv. pip install pipenv
+* Install Pipfile and create environment. pipenv install Pipfile
+* Activate environment. pipenv shell
 
 
 
@@ -33,7 +37,7 @@ The `conftest.py` module uses the Webdriver-Manager dependency to manage the var
 
 ### Running tests
 
-
+Example: pytest -m repo_list_home_page --html=report.html
 
 
 #### Test Reports

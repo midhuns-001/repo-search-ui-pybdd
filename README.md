@@ -36,7 +36,7 @@ The `conftest.py` module uses the Webdriver-Manager dependency to manage the var
 
 
 ### Running tests
-
+Run the application: Example: npm install && npm start
 Example: pytest -m repo_list_home_page --html=report.html
 Example: pytest -m smoke --html=report.html
 

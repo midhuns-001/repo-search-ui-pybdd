@@ -50,10 +50,10 @@ The `conftest.py` module uses the Webdriver-Manager dependency to manage the var
 
 
 ### Running tests
-The tests are easy to run as the project uses Pytest, so running the tests is as simple as running Pytest. As Pipenv is being used for dependency management this means running `pipenv run pytest` within the directory in which the repo has been cloned. The tests for an individual page can be run by passing the associated steps file as a parameter to the command, e.g. to run just the Checkboxes page tests `pipenv run pytest .\step_defs\test_checkboxes_page_steps.py`. Note that it is the steps file, rather than the feature file, which is specified. The steps file is bound to the corresponding feature via the `scenarios` keyword in the steps file, with the feature file path passed in as a parameter. The `browser` property can also be specified on the command line, e.g. `pipenv run pytest --browser Firefox` will run the test suite in Firefox.
 
-NB Each test opens up in a separate browser instance (which is closed at the end of the test) so is not the fastest way to run a test suite, but it is the right way as we should ensure that tests are wholly independent of one another, do not share state and can run in any order. There are no `BeforeAll` and `AfterAll` hooks (that I am aware of), so we can’t open a single browser at the start of the test suite, navigate to the relevant page in the setup for each individual test scenario and close the browser at the end of the test suite. Having a separate browser per test also allows for test parallelisation which wouldn't otherwise be possible.
+
+
 
 #### Test Reports
-A report is generated for each test run as part of the GitHub Actions workflow (in the `Run tests` step). This is a simple report showing a list of the steps classes (each linked to a feature file) that have been executed and the overall result. In the event of a failing scenario, the details of the failure (actual versus expected result) are shown to allow easy debugging.
+
 

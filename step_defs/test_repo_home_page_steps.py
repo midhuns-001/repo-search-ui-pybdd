@@ -58,7 +58,6 @@ def verify_pagination_range_for_given_rows_per_page(browser, rows_per_page):
     assert pagination_range_ui == rows_per_page
 
 
-
 @then('verify previous and next buttons are present in the page')
 def verify_previous_next_buttons_in_repo_list_table(browser):
     assert RepoHomePage(browser).get_previous_button_repo_table()

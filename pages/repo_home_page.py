@@ -114,3 +114,25 @@ class RepoHomePage(BasePage):
     def click_ok_button_from_repo_details_pop_up(self):
         self.browser.find_element(*self._repo_details_ok_button_xpath).click()
         WebDriverWait(self.browser, 1).until(EC.visibility_of_element_located(self.PAGE_TITLE))
+
+    def select_rows_per_page_from_drop_down(self, rows_per_page):
+        self.browser.find_element(*self._repo_list_rows_select_drop_down_xpath).click()
+        select_option_xpath = (By.XPATH, "//li[@data-value='" + rows_per_page + "']")
+        self.browser.find_element(*select_option_xpath).click()
+        WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
+        time.sleep(1)
+
+    def click_and_navigate_to_page(self, button):
+        _repos_navigate_button_xpath = (By.XPATH, "//button[@aria-label='" + button + "']")
+        self.browser.find_element(*_repos_navigate_button_xpath).click()
+        WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
+
+    def click_on_link_and_verify_url(self, github_link):
+        handle_orig = self.browser.current_window_handle
+        _repos_link_xpath = (By.XPATH, "//td//a[text()='" + github_link + "']")
+        self.browser.find_element(*_repos_link_xpath).click()
+        time.sleep(2)
+        self.browser.switch_to.window(self.browser.window_handles[1])
+        return self.browser.current_url
+
+

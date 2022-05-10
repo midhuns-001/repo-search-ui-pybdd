@@ -51,6 +51,14 @@ def verify_num_of_entities_present_in_table(browser, rows: int):
     assert rows == total_rows_in_ui
 
 
+@then('verify the pagination range changed to <rows_per_page>')
+@then(parsers.parse('verify the pagination range changed to {rows_per_page}'))
+def verify_pagination_range_for_given_rows_per_page(browser, rows_per_page):
+    pagination_range_ui = RepoHomePage(browser).get_total_repos_found_in_ui().split(' ')[0].split('–')[1]
+    assert pagination_range_ui == rows_per_page
+
+
+
 @then('verify previous and next buttons are present in the page')
 def verify_previous_next_buttons_in_repo_list_table(browser):
     assert RepoHomePage(browser).get_previous_button_repo_table()
@@ -101,3 +109,57 @@ def verify_repo_details_popup_texts(browser):
 @then('click on ok button and come back to home page')
 def click_ok_button_from_repo_details_pop_up(browser):
     RepoHomePage(browser).click_ok_button_from_repo_details_pop_up()
+
+
+@then('select the rows per page drop down and update it to <rows_per_page>')
+@then(parsers.parse('select the rows per page drop down and update it to {rows_per_page}'))
+def select_rows_per_page_from_drop_down(browser, rows_per_page: int):
+    RepoHomePage(browser).select_rows_per_page_from_drop_down(rows_per_page)
+
+
+
+@then('click on <button_type> button for no. of <iterations> and verify default rows per page for <rows_per_page>, the table rows less than or equals <rows_per_page> and pagination range')
+@then(parsers.parse('click on {button_type} button for no. of {iterations} and verify default rows per page for {rows_per_page}, the table rows less than or equals {rows_per_page} and pagination range'))
+def navigate_and_verify_page_properties(browser, button_type, iterations: int, rows_per_page: int):
+    button_type_dict = {'next': 'Go to next page', 'previous': 'Go to previous page'}
+    if button_type.lower() == 'next':
+        end_page_range = int(rows_per_page)
+        start_page_range = 1
+        start_iter = 0
+        end_iter = int(iterations)
+        steps = 1
+    else:
+        end_page_range = int(rows_per_page) * (int(iterations) + 1)
+        start_page_range = end_page_range - (int(rows_per_page) + 1)
+        start_iter = int(iterations)
+        end_iter = -1
+        steps = -1
+
+    for i in range(start_iter, end_iter):
+        RepoHomePage(browser).click_and_navigate_to_page(button_type_dict[button_type])
+
+        rows_per_page_ui = RepoHomePage(browser).rows_per_page_in_drop_down()
+        assert rows_per_page_ui == rows_per_page
+
+        rows_from_ui = RepoHomePage(browser).get_rows_in_given_page()
+        assert rows_from_ui <= int(rows_per_page)
+        if button_type.lower() == 'next':
+            end_page_range = end_page_range + int(rows_per_page)
+            start_page_range = start_page_range + int(rows_per_page)
+        else:
+            end_page_range = end_page_range + int(rows_per_page)
+            start_page_range = end_page_range - (int(rows_per_page) + 1)
+
+        page_range = str(start_page_range) + '–' + str(end_page_range)
+        pagination_range_ui = RepoHomePage(browser).get_total_repos_found_in_ui().split(' ')[0]
+        assert pagination_range_ui == page_range
+
+
+@then('click on link <github_link> and verify the url opened in new tab')
+@then(parsers.parse('click on link {github_link} and verify the url opened in new tab'))
+def click_on_link_and_verify_url(browser, github_link):
+    url = RepoHomePage(browser).click_on_link_and_verify_url(github_link)
+    assert "https://github.com/" + github_link == url
+
+
+

@@ -28,7 +28,7 @@ Feature: Repo List Home Page
     | repo_name               | no_of_rows   | row_name        |
     | midhuns-001/midhuns-001 |  7           | python_learning |
 
-  @smoke @regression @repo_list_home_page
+  @regression @repo_list_home_page
   Scenario Outline: List and verify the repo details pop up for a given repo list in the table
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
@@ -38,12 +38,14 @@ Feature: Repo List Home Page
     Then click on Get Details icon for <row_name> and verify the <message>
     Then verify the repo details pop up for <repo_name>
     Then verify the fields in repo details pop up
-    Then click on ok button and come back to home page
+    Then click on <button_option> and come back to home page
   Examples:
-    | repo_name                   | no_of_rows   | row_name        | message      |
-    | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw | Repo Details |
+    | repo_name                   | no_of_rows   | row_name        | message      | button_option |
+    | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw | Repo Details | ok            |
+    | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw | Repo Details | close         |
 
-  @smoke @regression @repo_list_home_page
+
+  @regression @repo_list_home_page
   Scenario Outline: List and verify the rows per page drop down given a repo name
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
@@ -60,7 +62,7 @@ Feature: Repo List Home Page
     | react     |    25         |
     | react     |    50         |
 
-  @smoke @regression @repo_list_home_page
+  @regression @repo_list_home_page
   Scenario Outline: Navigate to next page and verify the repo table properties. Verify previous pages once its done
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
@@ -78,8 +80,7 @@ Feature: Repo List Home Page
     | react     |    25         | 2          |
     | react     |    50         | 3          |
 
-
-  @smoke @regression @repo_list_home_page
+  @regression @repo_list_home_page
   Scenario Outline: Click and verify link to the github url from repo list home page
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
@@ -91,8 +92,7 @@ Feature: Repo List Home Page
     | repo_name               | no_of_rows   | github_link                |
     | midhuns-001/midhuns-001 |  7           | midhuns-001/python_learning |
 
-
-  @smoke @regression @repo_list_home_page
+  @regression @repo_list_home_page
   Scenario Outline: Verify the repo details error message for a repo which is empty - Negative
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
@@ -100,7 +100,21 @@ Feature: Repo List Home Page
     Then verify repo list table columns like name, owner, stars, link, details
     Then verify <no_of_rows> present in table
     Then click on Get Details icon for <row_name> and verify the <message>
-
   Examples:
     | repo_name    | no_of_rows   | row_name    | message                 |
     | midhuns-001  |  1           | midhuns-001 | Git Repository is empty |
+
+
+  @regression @repo_list_home_page
+  Scenario Outline: Navigate to subsequent pages of a repo and verify the api rate limit error message
+    Then the page title is "Repository List"
+    Then enter <repo_name> in search box
+    Then click on search button
+    Then verify repo list table columns like name, owner, stars, link, details
+    Then select the rows per page drop down and update it to <rows_per_page>
+    Then verify default rows per page is listed as <rows_per_page> in rows per page drop down
+    Then verify <rows_per_page> present in table
+    Then click on next button for <iterations> and verify the api rate limit exceeded error message
+  Examples:
+    | repo_name | rows_per_page | iterations |
+    | java      |    50         | 50         |

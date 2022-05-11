@@ -21,10 +21,10 @@ class RepoHomePage(BasePage):
     _repo_list_search_button_xpath = (By.XPATH, "//button[@aria-label='search']")
 
     _repo_list_rows_per_page_text_field = (By.XPATH, "//p[text()='Rows per page:']")
-    _repo_list_rows_select_drop_down_xpath = (By.XPATH, "//div[@aria-haspopup='listbox']")
+    _repo_list_rows_select_drop_down_xpath = (By.ID, "mui-1")
     _repos_displayed_rows = (By.XPATH, "//p[contains(@class, 'MuiTablePagination')][2]")
     _repos_button_previous_page_xpath = (By.XPATH, "//button[@aria-label='Go to previous page']")
-    _repos_button_next_page_xpath = (By.XPATH, "//button[@aria-label='Go to next page']")
+    _repos_button_next_page_xpath = (By.XPATH, "//button[@title='Go to next page']")
 
     _repos_table_rows_xpath = (By.XPATH, "//table/tbody//tr")
     _repo_get_details_tooltip_xpath = (By.XPATH, "//div[@role='tooltip']")
@@ -36,9 +36,10 @@ class RepoHomePage(BasePage):
     _repo_details_recent_forked_user_bio_header = (By.XPATH, "//p[contains(@class, 'MuiTypography-root')][5]")
     _repo_details_recent_forked_user_bio_value = (By.XPATH, "//p[contains(@class, 'MuiTypography-root')][6]")
     _repo_details_ok_button_xpath = (By.XPATH, "//div[contains(@class, 'MuiDialogActions-root')]//button")
+    _repo_details_close_button_xpath = (By.XPATH, "//button[@aria-label='close']")
 
     _repo_details_error_message_pop_up_id = (By.ID, "swal2-title")
-    _repo_details_error_message_for_empty_repo_xpath = (By.XPATH, "//h2[text()='Unable to fetch commit details - Git Repository is empty.. Please retry again.']")
+    _repo_table_header_no_data_found_message_xpath = (By.XPATH, "//h6[text()='No Data Found']")
 
     def __init__(self, browser):
         self.browser = browser
@@ -129,17 +130,36 @@ class RepoHomePage(BasePage):
         self.browser.find_element(*self._repo_details_ok_button_xpath).click()
         WebDriverWait(self.browser, 1).until(EC.visibility_of_element_located(self.PAGE_TITLE))
 
+    def click_close_button_from_repo_details_pop_up(self):
+        self.browser.find_element(*self._repo_details_close_button_xpath).click()
+        WebDriverWait(self.browser, 1).until(EC.visibility_of_element_located(self.PAGE_TITLE))
+
     def select_rows_per_page_from_drop_down(self, rows_per_page):
         self.browser.find_element(*self._repo_list_rows_select_drop_down_xpath).click()
         select_option_xpath = (By.XPATH, "//li[@data-value='" + rows_per_page + "']")
         self.browser.find_element(*select_option_xpath).click()
         WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
-        time.sleep(1)
+        time.sleep(2)
 
     def click_and_navigate_to_page(self, button):
-        _repos_navigate_button_xpath = (By.XPATH, "//button[@aria-label='" + button + "']")
+        _repos_navigate_button_xpath = (By.XPATH, "//button[@title='" + button + "']")
+        ActionChains(self.browser).move_to_element(self.browser.find_element(*_repos_navigate_button_xpath)).perform()
         self.browser.find_element(*_repos_navigate_button_xpath).click()
-        WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
+        try:
+            WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
+        except:
+            self.browser.find_element(*_repos_navigate_button_xpath).click()
+            WebDriverWait(self.browser, 5).until(EC.invisibility_of_element(self._page_loading_message_xpath))
+
+    def click_and_navigate_to_next_page(self):
+        _repos_navigate_button_xpath = (By.XPATH, "//button[@title='Go to next page']")
+        ActionChains(self.browser).move_to_element(self.browser.find_element(*_repos_navigate_button_xpath)).perform()
+        self.browser.find_element(*_repos_navigate_button_xpath).click()
+        time.sleep(2)
+        if self.browser.find_element(*self._repo_table_header_no_data_found_message_xpath).is_displayed():
+            return self.verify_repo_details_pop_up_error_message()
+
+        return 'Success'
 
     def click_on_link_and_verify_url(self, github_link):
         handle_orig = self.browser.current_window_handle

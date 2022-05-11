@@ -125,9 +125,13 @@ def verify_repo_details_popup_texts(browser):
     assert "Recent Forked User Bio:" == header
 
 
-@then('click on ok button and come back to home page')
-def click_ok_button_from_repo_details_pop_up(browser):
-    RepoHomePage(browser).click_ok_button_from_repo_details_pop_up()
+@then('click on <button_option> and come back to home page')
+@then(parsers.parse('click on {button_option} and come back to home page'))
+def click_ok_button_from_repo_details_pop_up(browser, button_option):
+    if 'ok' in button_option.lower():
+        RepoHomePage(browser).click_ok_button_from_repo_details_pop_up()
+    if 'close' in button_option.lower():
+        RepoHomePage(browser).click_close_button_from_repo_details_pop_up()
 
 
 @then('select the rows per page drop down and update it to <rows_per_page>')
@@ -135,6 +139,16 @@ def click_ok_button_from_repo_details_pop_up(browser):
 def select_rows_per_page_from_drop_down(browser, rows_per_page: int):
     RepoHomePage(browser).select_rows_per_page_from_drop_down(rows_per_page)
 
+
+@then(parsers.parse('click on next button for {iterations} and verify the {message} error message'))
+def click_on_next_button_for_iterations(browser, iterations: int, message):
+    for i in range(0, int(iterations)):
+        message_ui = RepoHomePage(browser).click_and_navigate_to_next_page()
+        if 'Success' in message_ui:
+            pass
+        else:
+            break
+    assert message in message_ui
 
 @then('click on <button_type> button for no. of <iterations> and verify default rows per page for <rows_per_page>, the table rows less than or equals <rows_per_page> and pagination range')
 @then(parsers.parse('click on {button_type} button for no. of {iterations} and verify default rows per page for {rows_per_page}, the table rows less than or equals {rows_per_page} and pagination range'))
@@ -145,13 +159,11 @@ def navigate_and_verify_page_properties(browser, button_type, iterations: int, r
         start_page_range = 1
         start_iter = 0
         end_iter = int(iterations)
-        steps = 1
     else:
         end_page_range = int(rows_per_page) * (int(iterations) + 1)
         start_page_range = end_page_range - (int(rows_per_page) + 1)
         start_iter = int(iterations)
         end_iter = -1
-        steps = -1
 
     for i in range(start_iter, end_iter):
         RepoHomePage(browser).click_and_navigate_to_page(button_type_dict[button_type])

@@ -23,6 +23,7 @@ Feature: Repo List Home Page
     Then verify repo list table columns like name, owner, stars, link, details
     Then verify <no_of_rows> present in table
     Then verify Get Details tooltip for the row <row_name> by mouse hover
+    Then verify the table values for a given row <row_name>
   Examples:
     | repo_name               | no_of_rows   | row_name        |
     | midhuns-001/midhuns-001 |  7           | python_learning |
@@ -34,12 +35,13 @@ Feature: Repo List Home Page
     Then click on search button
     Then verify repo list table columns like name, owner, stars, link, details
     Then verify <no_of_rows> present in table
-    Then click on Get Details icon for <row_name> <repo_name> and verify the repo details pop up
+    Then click on Get Details icon for <row_name> and verify the <message>
+    Then verify the repo details pop up for <repo_name>
     Then verify the fields in repo details pop up
     Then click on ok button and come back to home page
   Examples:
-    | repo_name                   | no_of_rows   | row_name        |
-    | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw |
+    | repo_name                   | no_of_rows   | row_name        | message      |
+    | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw | Repo Details |
 
   @smoke @regression @repo_list_home_page
   Scenario Outline: List and verify the rows per page option given a repo name
@@ -87,3 +89,17 @@ Feature: Repo List Home Page
   Examples:
     | repo_name               | no_of_rows   | github_link                |
     | midhuns-001/midhuns-001 |  7           | midhuns-001/python_learning |
+
+
+  @smoke @regression @repo_list_home_page
+  Scenario Outline: Verify the repo details error message for a repo which is empty - Negative
+    Then the page title is "Repository List"
+    Then enter <repo_name> in search box
+    Then click on search button
+    Then verify repo list table columns like name, owner, stars, link, details
+    Then verify <no_of_rows> present in table
+    Then click on Get Details icon for <row_name> and verify the <message>
+
+  Examples:
+    | repo_name    | no_of_rows   | row_name    | message                 |
+    | midhuns-001  |  1           | midhuns-001 | Git Repository is empty |

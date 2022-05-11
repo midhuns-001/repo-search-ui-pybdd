@@ -3,7 +3,7 @@ import json
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from pytest_bdd import given, then, parsers
+from pytest_bdd import given, parsers
 from pages.base import BasePage
 
 
@@ -58,26 +58,6 @@ def browser(config):
 
     # Quit the WebDriver instance for the teardown
     b.quit()
-
-
-@pytest.fixture
-def datatable():
-    return DataTable()
-
-
-class DataTable(object):
-
-    def __init__(self):
-        pass
-
-    def __str__(self):
-        dt_str = ''
-        for field, value in self.__dict__.items():
-            dt_str = f'{dt_str}\n{field} = {value}'
-        return dt_str
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
 
 @given(parsers.parse('I have navigated to the \'Repository-List\' "{page_name}" page'), target_fixture='navigate_to')

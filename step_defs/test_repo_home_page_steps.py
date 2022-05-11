@@ -64,6 +64,15 @@ def verify_previous_next_buttons_in_repo_list_table(browser):
     assert RepoHomePage(browser).get_next_button_repo_table()
 
 
+@then('verify the table values for a given row <row_name>')
+@then(parsers.parse('verify the table values for a given row {row_name}'))
+def verify_table_values_for_given_row(browser, row_name):
+    assert RepoHomePage(browser).verify_name_field_for_given_row(row_name)
+    assert RepoHomePage(browser).verify_owner_field_for_given_row(row_name)
+    assert RepoHomePage(browser).verify_stars_field_for_given_row(row_name)
+    assert RepoHomePage(browser).verify_link_field_for_given_row(row_name)
+
+
 @then('enter <repo_name> in search box')
 @then(parsers.parse('enter {repo_name} in search box'))
 def enter_repo_name_to_be_searched(browser, repo_name):
@@ -89,10 +98,22 @@ def verify_details_tooltip_by_mouse_hover(browser, row_name):
     assert tooltip_message_ui == 'Get Details'
 
 
-@then('click on Get Details icon for <row_name> <repo_name> and verify the repo details pop up')
-@then(parsers.parse('click on Get Details icon for {row_name} {repo_name} and verify the repo details pop up'))
-def click_on_get_details_for_given_repo_name(browser, row_name, repo_name):
-    assert "Repo Details - " + repo_name == RepoHomePage(browser).click_on_get_details_icon(row_name)
+@then('click on Get Details icon for <row_name> and verify the <message>')
+@then(parsers.parse('click on Get Details icon for {row_name} and verify the {message}'))
+def click_on_get_details_for_given_repo_name(browser, row_name, message):
+    message_ui = RepoHomePage(browser).click_on_get_details_icon(row_name)
+    assert message in message_ui
+
+
+@then('verify empty repo error message')
+def verify_empty_repo_error_message(browser):
+    RepoHomePage(browser).verify_empty_repo_error_message()
+
+
+@then('verify the repo details pop up for <repo_name>')
+@then(parsers.parse('verify the repo details pop up for {repo_name}'))
+def verify_repo_details_pop_up(browser, repo_name):
+    assert "Repo Details - " + repo_name == RepoHomePage(browser).get_repo_details_pop_up_header()
 
 
 @then('verify the fields in repo details pop up')

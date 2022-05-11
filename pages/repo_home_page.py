@@ -37,6 +37,9 @@ class RepoHomePage(BasePage):
     _repo_details_recent_forked_user_bio_value = (By.XPATH, "//p[contains(@class, 'MuiTypography-root')][6]")
     _repo_details_ok_button_xpath = (By.XPATH, "//div[contains(@class, 'MuiDialogActions-root')]//button")
 
+    _repo_details_error_message_pop_up_id = (By.ID, "swal2-title")
+    _repo_details_error_message_for_empty_repo_xpath = (By.XPATH, "//h2[text()='Unable to fetch commit details - Git Repository is empty.. Please retry again.']")
+
     def __init__(self, browser):
         self.browser = browser
 
@@ -92,11 +95,22 @@ class RepoHomePage(BasePage):
         ActionChains(self.browser).move_to_element(self.browser.find_element(*get_details_xpath)).perform()
         try:
             self.browser.find_element(*get_details_xpath).click()
+            time.sleep(1)
+            if self.browser.find_element(*self._repo_details_error_message_pop_up_id).is_displayed():
+                return self.verify_repo_details_pop_up_error_message()
             WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(self._repo_details_pop_up_header_id))
+            if self.browser.find_element(*self._repo_details_pop_up_header_id).is_displayed():
+                return self.browser.find_element(*self._repo_details_pop_up_header_id).text
         except:
             self.browser.find_element(*get_details_xpath).click()
             WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(self._repo_details_pop_up_header_id))
+            return self.browser.find_element(*self._repo_details_pop_up_header_id).text
 
+    def verify_repo_details_pop_up_error_message(self):
+        return self.browser.find_element(*self._repo_details_error_message_pop_up_id).text
+
+    def get_repo_details_pop_up_header(self):
+        WebDriverWait(self.browser, 3).until(EC.visibility_of_element_located(self._repo_details_pop_up_header_id))
         return self.browser.find_element(*self._repo_details_pop_up_header_id).text
 
     def get_last_three_committers_info(self):
@@ -134,5 +148,21 @@ class RepoHomePage(BasePage):
         time.sleep(2)
         self.browser.switch_to.window(self.browser.window_handles[1])
         return self.browser.current_url
+
+    def verify_name_field_for_given_row(self, row_name):
+        name_field_xpath = (By.XPATH, "//tr//td[text()='" + row_name + "']/ancestor::tr//td[1]")
+        return self.browser.find_element(*name_field_xpath).text
+
+    def verify_owner_field_for_given_row(self, row_name):
+        owner_field_xpath = (By.XPATH, "//tr//td[text()='" + row_name + "']/ancestor::tr//td[2]")
+        return self.browser.find_element(*owner_field_xpath).text
+
+    def verify_stars_field_for_given_row(self, row_name):
+        stars_field_xpath = (By.XPATH, "//tr//td[text()='" + row_name + "']/ancestor::tr//td[3]")
+        return self.browser.find_element(*stars_field_xpath).text
+
+    def verify_link_field_for_given_row(self, row_name):
+        link_field_xpath = (By.XPATH, "//tr//td[text()='" + row_name + "']/ancestor::tr//td[4]//a")
+        return self.browser.find_element(*link_field_xpath).text
 
 

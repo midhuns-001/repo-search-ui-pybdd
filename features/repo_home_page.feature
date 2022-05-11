@@ -4,7 +4,7 @@ Feature: Repo List Home Page
     Given I have navigated to the 'Repository-List' "Home" page
 
   @smoke @repo_list_home_page
-  Scenario: Verify Repo home page
+  Scenario: Verify Repo home page and its properties
     Then the page title is "Repository List"
     Then verify repo list table present
     Then verify repo list table columns like name, owner, stars, link, details
@@ -44,7 +44,7 @@ Feature: Repo List Home Page
     | midhuns-001/ecommerce-ui-fw |  1           | ecommerce-ui-fw | Repo Details |
 
   @smoke @regression @repo_list_home_page
-  Scenario Outline: List and verify the rows per page option given a repo name
+  Scenario Outline: List and verify the rows per page drop down given a repo name
     Then the page title is "Repository List"
     Then enter <repo_name> in search box
     Then click on search button
@@ -56,6 +56,7 @@ Feature: Repo List Home Page
     Then verify the pagination range changed to <rows_per_page>
   Examples:
     | repo_name | rows_per_page |
+    | react     |    10         |
     | react     |    25         |
     | react     |    50         |
 

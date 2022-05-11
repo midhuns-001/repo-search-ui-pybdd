@@ -1,5 +1,4 @@
-import time
-from pytest_bdd import scenarios, when, then, parsers
+from pytest_bdd import scenarios, then, parsers
 from pages.repo_home_page import RepoHomePage
 
 scenarios('../features/repo_home_page.feature')
@@ -135,7 +134,6 @@ def click_ok_button_from_repo_details_pop_up(browser):
 @then(parsers.parse('select the rows per page drop down and update it to {rows_per_page}'))
 def select_rows_per_page_from_drop_down(browser, rows_per_page: int):
     RepoHomePage(browser).select_rows_per_page_from_drop_down(rows_per_page)
-
 
 
 @then('click on <button_type> button for no. of <iterations> and verify default rows per page for <rows_per_page>, the table rows less than or equals <rows_per_page> and pagination range')
